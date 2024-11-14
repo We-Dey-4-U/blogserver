@@ -11,10 +11,12 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors({
-    origin: 'https://stella-unadike-agenda-9xi3.vercel.app',  // Allow only this domain
-    credentials: true,  // Allow cookies if needed
-  }));
+app.use(cors());
+
+//app.use(cors({
+  //  origin: 'https://stella-unadike-agenda-9xi3.vercel.app',  // Allow only this domain
+  //  credentials: true,  // Allow cookies if needed
+ // }));
 
 // Serve static files from the "uploads" folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

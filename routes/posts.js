@@ -4,27 +4,14 @@ const postController = require('../controllers/postController');
 const { verifyToken, isAdmin } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
-// @route   POST /api/posts
-// @desc    Create a new post (admin only)
-// @access  Private
-//router.post('/',upload.single('image'), verifyToken, isAdmin, postController.createPost);
+// Create a new post
+router.post('/', upload.single('image'), postController.createPost);
 
-
-router.post('/',upload.single('image'),  postController.createPost);
-
-// @route   GET /api/posts
-// @desc    Get all posts
-// @access  Public
+// Get all posts
 router.get('/', postController.getPosts);
 
-// @route   POST /api/posts/:id/like
-// @desc    Like a post
-// @access  Public
+// Like a post
 router.post('/:id/like', postController.likePost);
 
-// @route   POST /api/posts/:postId/comments
-// @desc    Create a comment on a post
-// @access  Public
-router.post('/:postId/comments', postController.createComment);
-
+// Comments for posts (already handled in comments routes)
 module.exports = router;

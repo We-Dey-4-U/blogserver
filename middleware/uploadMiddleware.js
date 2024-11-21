@@ -13,18 +13,21 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname);
+        const ext = path.extname(file.originalname).toLowerCase(); // Normalize extension
         cb(null, uniqueSuffix + ext);
     }
 });
 
-// File filter for images only
+// File filter for images only (MIME type and extension check)
 const fileFilter = function (req, file, cb) {
     const acceptedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp'];
-    if (acceptedMimeTypes.includes(file.mimetype)) {
-        cb(null, true);
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp'];
+    const ext = path.extname(file.originalname).toLowerCase();
+
+    if (acceptedMimeTypes.includes(file.mimetype) && allowedExtensions.includes(ext)) {
+        cb(null, true); // Accept file
     } else {
-        cb(new Error('Only JPEG, PNG, GIF, and BMP image files are allowed.'), false);
+        cb(new Error('Only JPEG, PNG, GIF, and BMP image files with valid extensions are allowed.'), false);
     }
 };
 

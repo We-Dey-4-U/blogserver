@@ -3,7 +3,6 @@ const Comment = require('../models/Comment');
 const path = require('path');
 
 // Create a post with optional image, video, or YouTube embed
-// Create a post with an optional image
 exports.createPost = async (req, res) => {
     const { title, content, author, videoUrl, youtubeEmbed, facebookEmbed, twitterEmbed, instagramEmbed } = req.body;
 
@@ -33,28 +32,38 @@ exports.createPost = async (req, res) => {
     }
 };
 
-// Get all posts (same as before)
-// Get all posts
+// Fetch all posts with enhanced error handling
 exports.getPosts = async (req, res) => {
     try {
-        const posts = await Post.find().sort({ createdAt: -1 }); // Sorting by creation date, newest first
-        res.json(posts); // Return the posts as JSON
-    } catch (err) {
-        res.status(500).json({ message: 'Failed to fetch posts' }); // Return error if something goes wrong
+        const posts = await Post.find().sort({ createdAt: -1 });
+        res.status(200).json(posts);
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        res.status(500).json({ message: 'Failed to fetch posts', error: error.message });
     }
 };
-// Like a post (same as before)
+
+// Like a post with error handling
 exports.likePost = async (req, res) => {
-    const post = await Post.findById(req.params.id);
-    post.likes += 1;
-    await post.save();
-    res.json(post);
+    try {
+        const post = await Post.findById(req.params.id);
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        post.likes += 1;
+        await post.save();
+        res.status(200).json(post);
+    } catch (error) {
+        console.error('Error liking post:', error);
+        res.status(500).json({ message: 'Failed to like post', error: error.message });
+    }
 };
 
-// Create comment (same as before)
-exports.createComment = async (req, res) => {
-    const { content, author } = req.body;
-    const comment = new Comment({ postId: req.params.postId, content, author });
-    await comment.save();
-    res.status(201).json(comment);
-};
+// Add a comment to a post
+// Add a comment to a post
+
+
+
+
+

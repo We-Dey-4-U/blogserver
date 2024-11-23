@@ -2,25 +2,24 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 // Replace with your secure key management strategy in production
-const JWT_SECRET = 'b708b14ccd6f4992b00b36b21bcacaef355ea960078550969c8c3c12a3a7bdca';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Middleware to verify JWT token
 exports.verifyToken = (req, res, next) => {
-    console.log('Incoming Token:', token);
-    const authHeader = req.headers['authorization'];
+    const authHeader = req.headers['authorization']; // Correct placement of variable declaration
 
     if (!authHeader) {
         console.error('Authorization header missing.');
         return res.status(401).json({ message: 'Authorization header is missing.' });
     }
 
-    const token = authHeader.split(' ')[1];// This should extract the token correctly
+    const token = authHeader.split(' ')[1]; // Correctly extract the token
     if (!token) {
         console.error('Token missing in Authorization header.');
         return res.status(401).json({ message: 'Token is missing in the Authorization header.' });
     }
 
-    console.log('Token received:', token); 
+    console.log('Token received:', token);
 
     jwt.verify(token, JWT_SECRET, (err, decoded) => {
         if (err) {
@@ -36,9 +35,11 @@ exports.verifyToken = (req, res, next) => {
     });
 };
 
-
+// Middleware to refresh JWT token
 exports.refreshTokenMiddleware = (req, res, next) => {
-    const token = req.headers['authorization']?.split(' ')[1];
+    const authHeader = req.headers['authorization']; // Correct placement
+    const token = authHeader?.split(' ')[1];
+
     if (!token) {
         return res.status(401).json({ message: 'Access Denied. No token provided.' });
     }
@@ -57,7 +58,6 @@ exports.refreshTokenMiddleware = (req, res, next) => {
         return res.status(400).json({ message: 'Invalid or expired token for refresh.' });
     }
 };
-
 
 // Middleware to check if the user is an admin
 exports.isAdmin = async (req, res, next) => {

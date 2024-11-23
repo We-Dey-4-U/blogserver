@@ -1,5 +1,6 @@
 const Post = require('../models/Post');
 const Comment = require('../models/Comment');
+const mongoose = require('mongoose');
 const path = require('path');
 
 // Create a post with optional image, video, or YouTube embed
@@ -60,6 +61,30 @@ exports.likePost = async (req, res) => {
     }
 };
 
+
+
+// Fetch a single post by ID with enhanced error handling
+exports.getPost = async (req, res) => {
+    const { id } = req.params;
+
+    // Check if the ID is valid
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: 'Invalid post ID' });
+    }
+
+    try {
+        const post = await Post.findById(id);
+
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        res.status(200).json(post);
+    } catch (error) {
+        console.error('Error fetching post:', error);
+        res.status(500).json({ message: 'Failed to fetch post', error: error.message });
+    }
+};
 // Add a comment to a post
 // Add a comment to a post
 

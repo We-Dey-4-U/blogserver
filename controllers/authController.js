@@ -2,7 +2,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User'); // Assume a User model is defined in backend/models/User.js
 
-const JWT_SECRET = 'b708b14ccd6f4992b00b36b21bcacaef355ea960078550969c8c3c12a3a7bdca';  // Change this to your preferred secret key
+//const JWT_SECRET = 'b708b14ccd6f4992b00b36b21bcacaef355ea960078550969c8c3c12a3a7bdca';  // Change this to your preferred secret key
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Register a new user
 exports.register = async (req, res) => {

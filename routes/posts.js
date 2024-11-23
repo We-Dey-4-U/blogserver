@@ -9,6 +9,7 @@ router.post('/', upload.single('image'), postController.createPost);
 
 // Get all posts
 router.get('/', postController.getPosts);
+router.get('/:id', postController.getPost);
 
 // Like a post
 router.post('/:id/like', postController.likePost);

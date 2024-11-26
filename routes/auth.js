@@ -1,15 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
+const upload = require('../middleware/uploadMiddleware');
+const { verifyToken } = require('../middleware/authMiddleware');
 
-// @route   POST /api/auth/register
-// @desc    Register a new user
-// @access  Public
+// Register a user
 router.post('/register', authController.register);
 
-// @route   POST /api/auth/login
-// @desc    Login an existing user
-// @access  Public
+// Login a user
 router.post('/login', authController.login);
+
+router.get('/dashboard', verifyToken, authController.getUserDashboard);
+
+router.put('/updateProfile', verifyToken, upload.single('profileImage'), authController.updateProfile);
 
 module.exports = router;

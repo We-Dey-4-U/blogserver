@@ -13,13 +13,18 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+
+// Serve static files from specific directories for images
+app.use('/uploads/profile-images', express.static(path.join(__dirname, 'uploads/profile-images')));
+app.use('/uploads/product-images', express.static(path.join(__dirname, 'uploads/product-images')));
+app.use('/uploads/post-images', express.static(path.join(__dirname, 'uploads/post-images')));
 // Serve static files
 //app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
-  setHeaders: (res) => {
-      res.setHeader('Cache-Control', 'public, max-age=3600');
-  },
-}));
+//app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+// setHeaders: (res) => {
+//    res.setHeader('Cache-Control', 'public, max-age=3600');
+//},
+//}));
 
 // MongoDB Connection
 mongoose
@@ -34,10 +39,21 @@ mongoose
 const postRoutes = require('./routes/posts');
 const commentRoutes = require('./routes/comments');
 const authRoutes = require('./routes/auth');
+const productRoutes = require('./routes/products');
+const orderRoutes = require('./routes/orders'); // Import order routes
+const storeRoutes = require('./routes/storeRoutes');
+const messageRoutes = require('./routes/messageRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
+
 
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes); // This will handle the `/api/products` endpoint
+app.use('/api/orders', orderRoutes); // Add orders route
+app.use('/api/stores', storeRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // Handle invalid routes
 app.use((req, res, next) => {

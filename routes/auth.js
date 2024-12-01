@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
-const upload = require('../middleware/uploadMiddleware');
+const upload = require('../middleware/profileuploadMiddleware');
 const { verifyToken } = require('../middleware/authMiddleware');
+
+
 
 // Register a user
 router.post('/register', authController.register);

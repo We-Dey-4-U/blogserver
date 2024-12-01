@@ -25,13 +25,21 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// CORS configuration
+// CORS configuration for development
 app.use(cors({
-  origin: ['https://stella-unadike-agenda-9xi3.vercel.app'], // Allow only your frontend domain
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Authorization', 'Content-Type'],
-  credentials: true, // Allow credentials (e.g., cookies, auth headers)
+  origin: '*', // Allow all origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+  allowedHeaders: ['Authorization', 'Content-Type'], // Allowed headers
+  credentials: true, // Allow credentials
 }));
+
+// CORS configuration
+//app.use(cors({
+ // origin: ['https://stella-unadike-agenda-9xi3.vercel.app'], // Allow only your frontend domain
+//  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//  allowedHeaders: ['Authorization', 'Content-Type'],
+//  credentials: true, // Allow credentials (e.g., cookies, auth headers)
+//}));
 
 // Static file serving
 app.use('/uploads/profile-images', express.static(path.join(__dirname, 'uploads/profile-images')));
@@ -56,6 +64,7 @@ const orderRoutes = require('./routes/orders');
 const storeRoutes = require('./routes/storeRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const cartRoutes = require('./routes/cartRoutes');
 
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
@@ -65,6 +74,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/stores', storeRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/cart', cartRoutes);
 
 // Handle 404 errors
 app.use((req, res, next) => {

@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const postController = require('../controllers/postController');
 const { verifyToken, isAdmin } = require('../middleware/authMiddleware');
-const upload = require('../middleware/uploadMiddleware');
+const upload = require('../middleware/blogpostuploadMidleware');
+
+
 
 // Create a new post
 router.post('/', upload.single('image'), postController.createPost);

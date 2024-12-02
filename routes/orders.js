@@ -1,15 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const orderController = require('../controllers/orderController');
-const { verifyToken } = require('../middleware/authMiddleware');// Assuming you have token verification middleware
-
+const orderController = require('../controllers/orderController'); // Import order controller
+const { verifyToken } = require('../middleware/authMiddleware'); // Import middleware for token verification
 // Create a new order
 router.post('/', verifyToken, orderController.createOrder);
-
-// Get all orders for a user (buyer or seller)
 router.get('/', verifyToken, orderController.getOrders);
-
-// Update the status of an order
 router.put('/status', verifyToken, orderController.updateOrderStatus);
+router.get('/stats', verifyToken, orderController.getOrderStats);
+router.get('/seller', verifyToken, orderController.getSellerOrders);
+router.get('/buyer', verifyToken, orderController.getBuyerOrders);
+
 
 module.exports = router;

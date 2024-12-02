@@ -5,7 +5,8 @@ const User = require('../models/User'); // Assuming you have a User model
 // Create a new order
 const createOrder = async (req, res) => {
     try {
-        const { buyer, seller, products, totalAmount } = req.body;
+        const buyer = req.body.buyer || req.user.id; // Use authenticated user ID
+        const { seller, products, totalAmount } = req.body;
 
         // Validate buyer and seller
         const buyerUser = await User.findById(buyer);
@@ -62,7 +63,7 @@ const getOrders = async (req, res) => {
     }
 };
 
-// Update the order status (e.g., to 'completed' or 'cancelled')
+// Update the order status
 const updateOrderStatus = async (req, res) => {
     try {
         const { orderId, status } = req.body;
@@ -87,8 +88,104 @@ const updateOrderStatus = async (req, res) => {
     }
 };
 
+// Get order statistics
+const getOrderStats = async (req, res) => {
+    try {
+        const totalOrders = await Order.countDocuments();
+        const uniqueBuyers = (await Order.distinct('buyer')).length;
+
+        res.status(200).json({ totalOrders, uniqueBuyers });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to retrieve order stats', error: error.message });
+    }
+};
+
+// Create a new seller
+const createSeller = async (req, res) => {
+    try {
+        const { username, email, password } = req.body;
+
+        // Check if the user already exists
+        const existingSeller = await User.findOne({ email });
+        if (existingSeller) {
+            return res.status(400).json({ message: 'Seller with this email already exists' });
+        }
+
+        // Create a new seller
+        const newSeller = new User({
+            username,
+            email,
+            password, // Ensure password is hashed before saving
+            role: 'seller',
+        });
+
+        await newSeller.save();
+        res.status(201).json({ message: 'Seller created successfully', seller: newSeller });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to create seller', error: error.message });
+    }
+};
+
+// Create a new buyer
+const createBuyer = async (req, res) => {
+    try {
+        const { username, email, password } = req.body;
+
+        // Check if the user already exists
+        const existingBuyer = await User.findOne({ email });
+        if (existingBuyer) {
+            return res.status(400).json({ message: 'Buyer with this email already exists' });
+        }
+
+        // Create a new buyer
+        const newBuyer = new User({
+            username,
+            email,
+            password, // Ensure password is hashed before saving
+            role: 'buyer',
+        });
+
+        await newBuyer.save();
+        res.status(201).json({ message: 'Buyer created successfully', buyer: newBuyer });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to create buyer', error: error.message });
+    }
+};
+
+// Get orders for the logged-in seller
+const getSellerOrders = async (req, res) => {
+    try {
+        const sellerId = req.user.id; // Authenticated seller's ID
+        const orders = await Order.find({ seller: sellerId }).populate('products.productId').populate('buyer');
+        res.status(200).json(orders);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to retrieve seller orders', error: error.message });
+    }
+};
+
+// Get orders for the logged-in buyer
+const getBuyerOrders = async (req, res) => {
+    try {
+        const buyerId = req.user.id; // Authenticated buyer's ID
+        const orders = await Order.find({ buyer: buyerId }).populate('products.productId').populate('seller');
+        res.status(200).json(orders);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to retrieve buyer orders', error: error.message });
+    }
+};
+
 module.exports = {
     createOrder,
     getOrders,
     updateOrderStatus,
+    getOrderStats,
+    createSeller,
+    createBuyer,
+    getSellerOrders,
+    getBuyerOrders,
 };

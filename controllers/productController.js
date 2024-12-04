@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Product = require('../models/Product');
 const User = require('../models/User');
 
@@ -122,6 +123,29 @@ exports.getUserProductCount = async (req, res) => {
     }
   };
 
+
+
+  // Fetch product by ID
+ // Fetch product by ID
+exports.getProductById = async (req, res) => {
+  try {
+      const { productId } = req.params;
+
+      if (!mongoose.Types.ObjectId.isValid(productId)) {
+          return res.status(400).json({ message: 'Invalid Product ID.' });
+      }
+
+      const product = await Product.findById(productId);
+      if (!product) {
+          return res.status(404).json({ message: 'Product not found.' });
+      }
+
+      res.status(200).json({ product });
+  } catch (error) {
+      console.error('Error fetching product by ID:', error.message);
+      res.status(500).json({ message: 'Failed to fetch product', error: error.message });
+  }
+};
 
 
 

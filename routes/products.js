@@ -10,6 +10,7 @@ router.post('/', verifyToken, upload.single('productImage'), productController.c
 router.get('/', verifyToken, productController.getProducts);
 // Get products for the logged-in user
 router.get('/user', verifyToken, productController.getUserProducts);
+router.get('/:id',verifyToken, productController.getProductById);
 // Route to get products with count
 router.get('/my-product-count',verifyToken,  productController.getUserProductCount);
 router.get('/with-count', verifyToken, productController.getProductsWithCount);
